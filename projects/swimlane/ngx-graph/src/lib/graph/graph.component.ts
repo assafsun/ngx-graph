@@ -35,7 +35,7 @@ import * as ease from 'd3-ease';
 import 'd3-transition';
 import { Observable, Subscription, of } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
+import { identity, scale, smoothMatrix, toSVG, transform, translate, toCSS } from 'transformation-matrix';
 import { Layout } from '../models/layout.model';
 import { LayoutService } from './layouts/layout.service';
 import { Edge } from '../models/edge.model';
@@ -84,7 +84,7 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
   @Input() minZoomLevel = 0.1;
   @Input() maxZoomLevel = 4.0;
   @Input() autoZoom = false;
-  @Input() panOnZoom = true;
+  @Input() panOnZoom = false;
   @Input() animate? = false;
   @Input() autoCenter = false;
   @Input() update$: Observable<any>;
@@ -108,6 +108,7 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
   @ViewChild(ChartComponent, { read: ElementRef, static: true }) chart: ElementRef;
   @ViewChildren('nodeElement') nodeElements: QueryList<ElementRef>;
   @ViewChildren('linkElement') linkElements: QueryList<ElementRef>;
+  @ViewChild('graphElement', {static: false}) graphElem: ElementRef;
 
   private isMouseMoveCalled:boolean = false;
 
@@ -119,6 +120,7 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
   results = [];
   seriesDomain: any;
   transform: string;
+  transformCSS: string;
   legendOptions: any;
   isPanning = false;
   isDragging = false;
@@ -686,6 +688,29 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
    */
   pan(x: number, y: number, ignoreZoomLevel: boolean = false): void {
     const zoomLevel = ignoreZoomLevel ? 1 : this.zoomLevel;
+    const newTempTransofrmationMetrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
+
+    console.log({zoomLevel: this.zoomLevel});
+    console.log({e: newTempTransofrmationMetrix.e, f: newTempTransofrmationMetrix.f});
+    console.log({a: newTempTransofrmationMetrix.a, b: newTempTransofrmationMetrix.b});
+    console.log({c: newTempTransofrmationMetrix.c, d: newTempTransofrmationMetrix.d});
+    console.log({height: this.graphDims.height });
+    console.log({value1: (this.graphDims.height * -1 * zoomLevel) + 100 * zoomLevel});
+    console.log({value2: (this.dims.height - 50 * zoomLevel)});
+    console.log("----------------");
+    if (!ignoreZoomLevel) {
+        const newTempTransofrmationMetrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
+
+        if (newTempTransofrmationMetrix.e < (this.graphDims.width * zoomLevel * -1) + 100 * zoomLevel || 
+            newTempTransofrmationMetrix.e > (this.dims.width - 50 * zoomLevel)) {
+          return;
+        }
+
+        if (newTempTransofrmationMetrix.f < (this.graphDims.height * -1 * zoomLevel) + 100 * zoomLevel||
+            newTempTransofrmationMetrix.f > (this.dims.height - 50 * zoomLevel)) {
+          return;
+        }
+    }
     this.transformationMatrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
 
     this.updateTransform();
@@ -802,6 +827,7 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
    */
   updateTransform(): void {
     this.transform = toSVG(smoothMatrix(this.transformationMatrix, 100));
+    this.transformCSS = toCSS(smoothMatrix(this.transformationMatrix, 100));
   }
 
   /**

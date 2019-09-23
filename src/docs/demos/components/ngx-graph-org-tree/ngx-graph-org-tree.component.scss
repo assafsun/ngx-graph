@@ -3,6 +3,14 @@
     height: inherit;
     width: inherit;
 
+    .scroll-container {
+      height: 600px;
+      background: #eee;
+      overflow: auto;
+      padding: 0;
+      margin: 30px;
+    }
+
     .cardContainer {
         height: 100;
         width: 150;

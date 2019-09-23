@@ -1,5 +1,10 @@
+<div class="scroll-container">
+  <div class="graph-parent" [style.width.px]="graph.graphDims.width * graph.zoomLevel"
+  [style.height.px]="graph.graphDims.height * graph.zoomLevel"
+  [style.transform]="graph.transformCSS">
 <ngx-graph
 [view]="[800, 500]"
+#graph
 [links]="links"
 [nodes]="nodes"
 [curve]="curve"
@@ -9,7 +14,8 @@
 [layoutSettings]="layoutSettings"
 [curve]="curve"
 [enableZoom]="true"
-[autoZoom]="true">
+[autoZoom]="false"
+[enableTrackpadSupport]="true">
 
 <ng-template #defsTemplate>
   <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
@@ -44,3 +50,5 @@
 </svg:g>
 </ng-template>
 </ngx-graph>
+  </div>
+</div>

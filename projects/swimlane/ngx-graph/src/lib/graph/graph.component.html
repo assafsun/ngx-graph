@@ -1,5 +1,5 @@
 <ngx-charts-chart
-  [view]="[width, height]"
+  [view]="[graphDims.width, graphDims.height]"
   [showLegend]="legend"
   [legendOptions]="legendOptions"
   (legendLabelClick)="onClick($event)"
@@ -8,10 +8,10 @@
   mouseWheel
   (mouseWheelUp)="onZoom($event, 'in')"
   (mouseWheelDown)="onZoom($event, 'out')"
+  [attr.transform]="transform"
 >
-  <svg:g
+  <svg:g #graphElement
     *ngIf="initialized && graph"
-    [attr.transform]="transform"
     (touchstart)="onTouchStart($event)"
     (touchend)="onTouchEnd($event)"
     class="graph chart"
@@ -28,9 +28,8 @@
 
     <svg:rect
       class="panning-rect"
-      [attr.width]="dims.width * 100"
-      [attr.height]="dims.height * 100"
-      [attr.transform]="'translate(' + (-dims.width || 0) * 50 + ',' + (-dims.height || 0) * 50 + ')'"
+      [attr.width]="graphDims.width"
+      [attr.height]="graphDims.height"
       (mousedown)="isPanning = true"
     />
 

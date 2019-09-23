@@ -34,6 +34,10 @@ export class MouseWheelDirective {
   }
 
   mouseWheelFunc(event: any): void {
+    if (!event.ctrlKey) {
+      return;
+    }
+
     if (window.event) {
       event = window.event;
     }
