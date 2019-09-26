@@ -93,7 +93,7 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
   @Input() panToNode$: Observable<any>;
   @Input() layout: string | Layout;
   @Input() layoutSettings: any;
-  @Input() enableTrackpadSupport = false;
+  @Input() enableTrackpadSupport = true;
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();
@@ -686,8 +686,31 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
    */
   pan(x: number, y: number, ignoreZoomLevel: boolean = false): void {
     const zoomLevel = ignoreZoomLevel ? 1 : this.zoomLevel;
-    this.transformationMatrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
+    const newTempTransofrmationMetrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
 
+    console.log({zoomLevel: this.zoomLevel});
+    console.log({e: newTempTransofrmationMetrix.e, f: newTempTransofrmationMetrix.f});
+    console.log({a: newTempTransofrmationMetrix.a, b: newTempTransofrmationMetrix.b});
+    console.log({c: newTempTransofrmationMetrix.c, d: newTempTransofrmationMetrix.d});
+    console.log({height: this.graphDims.height });
+    console.log({value1: (this.graphDims.height * -1 * zoomLevel) + 100 * zoomLevel});
+    console.log({value2: (this.dims.height - 50 * zoomLevel)});
+    console.log("----------------");
+    if (!ignoreZoomLevel) {
+        const newTempTransofrmationMetrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
+
+        if (newTempTransofrmationMetrix.e < (this.graphDims.width * zoomLevel * -1) + 100 * zoomLevel || 
+            newTempTransofrmationMetrix.e > (this.dims.width - 50 * zoomLevel)) {
+          return;
+        }
+
+        if (newTempTransofrmationMetrix.f < (this.graphDims.height * -1 * zoomLevel) + 100 * zoomLevel||
+            newTempTransofrmationMetrix.f > (this.dims.height - 50 * zoomLevel)) {
+          return;
+        }
+    }
+
+    this.transformationMatrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
     this.updateTransform();
   }
 
