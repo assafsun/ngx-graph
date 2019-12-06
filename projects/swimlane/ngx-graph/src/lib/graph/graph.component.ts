@@ -94,10 +94,10 @@ export class GraphComponent extends BaseChartComponent implements OnInit, OnChan
   @Input() panToNode$: Observable<any>;
   @Input() layout: string | Layout;
   @Input() layoutSettings: any;
-  @Input() enableTrackpadSupport = false;
-  @Input() showMiniMap: boolean = false;
+  @Input() enableTrackpadSupport = true;
+  @Input() showMiniMap: boolean = true;
   @Input() miniMapMaxWidth: number = 100;
-  @Input() miniMapPosition: MiniMapPosition = MiniMapPosition.UpperLeft;
+  @Input() miniMapPosition: MiniMapPosition = MiniMapPosition.UpperRight;
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();
